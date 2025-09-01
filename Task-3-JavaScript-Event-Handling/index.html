@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Color Changer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            transition: background-color 0.3s ease;
+            background-color: #f0f0f0;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+            transition: transform 0.3s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .profile-img:hover {
+            transform: scale(1.05);
+        }
+        
+        .name {
+            color: #7CB342;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        .role {
+            color: #666;
+            font-size: 1rem;
+            margin: 0.5rem 0;
+            font-style: italic;
+        }
+        
+        h1 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 2rem;
+        }
+        
+        #colorButton {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        #colorButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        #colorButton:active {
+            transform: translateY(0);
+        }
+        
+        #colorDisplay {
+            margin-top: 1rem;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 25px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            color: #555;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- KannanTech Zone Logo -->
+        <div class="logo-container">
+            <img class="profile-img"
+                 src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEia7z9Hg7Vc7_F7xF6-PaEr67_Id5zkv_P0yV26v91Uat6siBDTc4Knw1OyxZaU_Kd6tTvqyglG0syF0PRsUPNfv257R-Eh8NcktU81nDLH1En-oB4_UECZN2O-kvWhHYcZpfz9JMaGb7GaOuH2eJqkAjXGMoP-CHuaYUsfgZ6c6QPp8WBUXxOjYg6LvJg/s16000-rw/cropped_circle_image%20(3)-min%20(1).png"
+                 alt="KannanTech Zone logo" />
+            <h1 class="name">KannanTech Zone</h1>
+            <p class="role">Collaborate with us</p>
+        </div>
+        
+        <h1>🎨 Random Color Generator</h1>
+        <button id="colorButton">Change Background Color</button>
+        <div id="colorDisplay">Current Color: #f0f0f0</div>
+    </div>
+
+    <script>
+        // Function to generate a random hex color
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+        
+        // Function to calculate luminance for contrast checking
+        function getLuminance(hex) {
+            const r = parseInt(hex.substr(1, 2), 16) / 255;
+            const g = parseInt(hex.substr(3, 2), 16) / 255;
+            const b = parseInt(hex.substr(5, 2), 16) / 255;
+            
+            const rs = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
+            const gs = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
+            const bs = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
+            
+            return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+        }
+        
+        // Function to change background color
+        function changeBackgroundColor() {
+            const randomColor = getRandomColor();
+            const body = document.body;
+            const colorDisplay = document.getElementById('colorDisplay');
+            const container = document.querySelector('.container');
+            
+            // Apply the new background color
+            body.style.backgroundColor = randomColor;
+            colorDisplay.textContent = `Current Color: ${randomColor}`;
+            
+            // Adjust container opacity based on background darkness
+            const luminance = getLuminance(randomColor);
+            if (luminance < 0.5) {
+                // Dark background - make container more opaque
+                container.style.background = 'rgba(255, 255, 255, 0.95)';
+            } else {
+                // Light background - make container less opaque
+                container.style.background = 'rgba(255, 255, 255, 0.85)';
+            }
+            
+            // Add a little animation effect
+            body.style.transform = 'scale(1.002)';
+            setTimeout(() => {
+                body.style.transform = 'scale(1)';
+            }, 150);
+        }
+        
+        // Get the button element and add event listener
+        const button = document.getElementById('colorButton');
+        button.addEventListener('click', changeBackgroundColor);
+        
+        // Optional: Add keyboard support (spacebar or Enter)
+        document.addEventListener('keydown', function(event) {
+            if (event.code === 'Space' || event.code === 'Enter') {
+                event.preventDefault();
+                changeBackgroundColor();
+            }
+        });
+        
+        // Optional: Change color automatically every 5 seconds (uncomment to enable)
+        // setInterval(changeBackgroundColor, 5000);
+    </script>
+</body>
+</html>
